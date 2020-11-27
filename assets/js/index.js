@@ -12,11 +12,13 @@ $(function () {
 
 function getUserInfo() {
   $.ajax({
+    method: "GET",
     url: "/my/userinfo",
-    headers: {
-      Authorization: localStorage.getItem("token") || "",
-    },
+    // headers: {
+    //   Authorization: localStorage.getItem("token") || "",
+    // },
     success: function (res) {
+      console.log(res);
       if (res.status !== 0) {
         return layui.year.msg(res.message);
       }
@@ -26,15 +28,15 @@ function getUserInfo() {
 }
 
 function renderAvatar(user) {
-  var nmae = user.nickname || user.username;
+  var name = user.nickname || user.username;
   $("#welcome").html("欢迎&nbsp;&nbsp;" + name);
 
   if (user.user_pic !== null) {
-    $(".layui-nav-img").show().attr("src", user.user_pic);
+    $(".layui-nav-img").attr("src", user.user_pic).show();
     $(".user-avatar").hide();
   } else {
     $(".layui-nav-img").hide();
-    var text = name[0].toUpperCase();
-    $(".user-avatar").show().html(text);
+    var first = name[0].toUpperCase();
+    $(".user-avatar").html(first).show();
   }
 }
