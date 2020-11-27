@@ -3,48 +3,48 @@ $(function () {
     $(".login-box").hide();
     $(".reg-box").show();
   });
+
   $("#link_login").on("click", function () {
     $(".login-box").show();
     $(".reg-box").hide();
   });
 
-  // 从Layui中获取DOM对象
   var form = layui.form;
-  var layer = layui.layer;
   form.verify({
-    pwd: [/^[\S]{6,16}$/, "密码必须6-16位,且不能输入空格"],
-    // 校验两次密码是否一致
-    repwd: function (value) {
+    pwd: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"],
+    rePwd: function (value) {
       var pwd = $(".reg-box input[name=password]").val();
-      if (pwd !== value) {
-        return "密码不一致";
+      console.log(pwd);
+      if (value !== pwd) {
+        return "两次密码输入不一致";
       }
     },
   });
-  //  监听注册表单提交
+  // 注册功能
+  var layer = layui.layer;
   $("#form_reg").on("submit", function (e) {
     e.preventDefault();
     $.ajax({
       method: "POST",
-      url: "/api/reguser",
+      url: "http://ajax.frontend.itheima.net/api/reguser",
       data: {
-        username: $("#form_reg [name=username]").val(),
-        password: $("#form_reg [name=password]").val(),
+        username: $(".reg-box input[name=username]").val(),
+        password: $(".reg-box input[name=password]").val(),
       },
       success: function (res) {
         if (res.status !== 0) {
           return layer.msg(res.message);
         }
         layer.msg(res.message);
-        // 切换到登录界面
+
         $("#link_login").click();
-        // 重置from表单
+        //清空表单值
         $("#form_reg")[0].reset();
       },
     });
   });
 
-  //监听登录的提交事件
+  // 登录功能
   $("#form_login").submit(function (e) {
     e.preventDefault();
     $.ajax({
@@ -55,10 +55,8 @@ $(function () {
         if (res.status !== 0) {
           return layer.msg(res.message);
         }
-        layer.msg(res.message);
-        //存储token
+        layer.msg("登陆成功");
         localStorage.setItem("token", res.token);
-        //跳转页面
         location.href = "/index.html";
       },
     });
